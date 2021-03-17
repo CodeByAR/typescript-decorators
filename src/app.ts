@@ -6,7 +6,7 @@ function Logger(constructor: Function) {
 
 //Decorator Factory
 function LoggerFactory(logStr: string) {
-  console.log('Logger Factory!!');
+  console.log("Logger Factory!!");
   return function (constructor: Function) {
     console.log(logStr);
     console.log(constructor);
@@ -14,9 +14,9 @@ function LoggerFactory(logStr: string) {
 }
 
 function WithTemplate(template: string, hookId: string) {
-  console.log('Template Factory!!');
+  console.log("Template Factory!!");
   return function (constructor: any) {
-    console.log('Rendering Template...');
+    console.log("Rendering Template...");
     const hookEl = document.getElementById(hookId);
     const p = new constructor();
     if (hookEl) {
@@ -41,3 +41,35 @@ class Person {
 
 const pObj = new Person();
 console.log(pObj);
+
+//Property Decorator
+//it executes when class definition is created
+function Log(target: any, propertyName: string | Symbol) {
+  console.log("Property Decorator!");
+  console.log(target, propertyName);
+}
+
+class Product {
+  @Log title: string;
+  private _price: number;
+  constructor(t: string, p: number) {
+    this.title = t;
+    this._price = p;
+  }
+
+  getPriceWithTax(tax: number) {
+    return this._price * (1 + tax);
+  }
+
+  set Price(val: number) {
+    if (val > 0) {
+      this._price = val;
+    } else {
+      throw new Error("Invalid Price - Price should be positive.");
+    }
+  }
+
+  get Price() {
+    return this._price;
+  }
+}
