@@ -26,7 +26,7 @@ function WithTemplate(template: string, hookId: string) {
   };
 }
 
-//Only class, method & accessor decorators can return values. 
+//Only class, method & accessor decorators can return values.
 //however, even if property and parameter decorators returns the values will be ignored
 //class decorator with a return
 //Will only be called when class is instantiated not when class is defined
@@ -131,3 +131,37 @@ class Product {
 //Decorators are executed when the class is defined & not at the time when class is instantiated
 const book1 = new Product("book1", 10);
 const book2 = new Product("book2", 20);
+
+//Method with a return
+// _ is used to inform typeScript that parameter is passed but not used by function
+function AutoBind(
+  _: any,
+  _2: string | Symbol,
+  descriptor: PropertyDescriptor
+) {
+  const originalMethod = descriptor.value;
+  const adjDescriptor: PropertyDescriptor = {
+    configurable: true,
+    enumerable: false,
+    get() {
+      const boundFn = originalMethod.bind(this);
+      return boundFn;
+    },
+  };
+  return adjDescriptor;
+}
+
+class Printer {
+  message = "This works!!";
+  @AutoBind
+  showMessage() {
+    console.log(this.message);
+  }
+}
+const p = new Printer();
+
+const btn = document.querySelector("button")!;
+//p.showMessage will show undefined if the method decorator is not created
+btn.addEventListener("click", p.showMessage);
+//Workaround
+//btn.addEventListener('click', p.showMessage.bind(p));
